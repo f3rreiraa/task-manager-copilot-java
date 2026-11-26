@@ -1,7 +1,7 @@
 package br.edu.taskmanager.service;
 import static org.junit.jupiter.api.Assertions.*; import static org.mockito.Mockito.*;
 import br.edu.taskmanager.dto.TaskRequest; import br.edu.taskmanager.entity.*; import br.edu.taskmanager.exception.TaskNotFoundException; import br.edu.taskmanager.repository.TaskRepository;
-import java.util.Optional; import org.junit.jupiter.api.*; import org.mockito.*;
+import java.util.List; import java.util.Optional; import org.junit.jupiter.api.*; import org.mockito.*;
 class TaskServiceTest {
  @Mock TaskRepository repository; @InjectMocks TaskService service;
  @BeforeEach void setup(){MockitoAnnotations.openMocks(this);}
@@ -65,5 +65,83 @@ class TaskServiceTest {
      // Act + Assert
      assertThrows(TaskNotFoundException.class, () -> service.update(42L, request));
      verify(repository, never()).save(any());
+ }
+
+ // testes do filtro (desafio final)
+
+ @Test
+ void shouldReturnAllTasksWhenNoFilterIsGiven() {
+     // Arrange
+     when(repository.findAll()).thenReturn(List.of(
+         new Task("Estudar Copilot", null, TaskStatus.PENDING, TaskPriority.LOW),
+         new Task("Lavar louça", null, TaskStatus.DONE, TaskPriority.LOW)));
+
+     // Act
+     var result = service.findAll(null, null);
+
+     // Assert
+     assertEquals(2, result.size());
+     verify(repository).findAll();
+ }
+
+ @Test
+ void shouldFilterOnlyByTitleIgnoringCase() {
+     // Arrange
+     when(repository.findByTitleContainingIgnoreCase("copilot")).thenReturn(List.of(
+         new Task("Estudar Copilot", null, TaskStatus.PENDING, TaskPriority.HIGH)));
+
+     // Act
+     var result = service.findAll("copilot", null);
+
+     // Assert
+     assertEquals(1, result.size());
+     assertEquals("Estudar Copilot", result.get(0).title());
+     verify(repository).findByTitleContainingIgnoreCase("copilot");
+     verify(repository, never()).findAll();
+ }
+
+ @Test
+ void shouldFilterOnlyByStatus() {
+     // Arrange
+     when(repository.findByStatus(TaskStatus.DONE)).thenReturn(List.of(
+         new Task("Lavar louça", null, TaskStatus.DONE, TaskPriority.LOW)));
+
+     // Act
+     var result = service.findAll(null, TaskStatus.DONE);
+
+     // Assert
+     assertEquals(1, result.size());
+     assertEquals(TaskStatus.DONE, result.get(0).status());
+     verify(repository).findByStatus(TaskStatus.DONE);
+ }
+
+ @Test
+ void shouldFilterByTitleAndStatusTogether() {
+     // Arrange
+     when(repository.findByTitleContainingIgnoreCaseAndStatus("copilot", TaskStatus.PENDING)).thenReturn(List.of(
+         new Task("Estudar Copilot", null, TaskStatus.PENDING, TaskPriority.MEDIUM)));
+
+     // Act
+     var result = service.findAll("copilot", TaskStatus.PENDING);
+
+     // Assert
+     assertEquals(1, result.size());
+     verify(repository).findByTitleContainingIgnoreCaseAndStatus("copilot", TaskStatus.PENDING);
+     verify(repository, never()).findByStatus(any());
+ }
+
+ @Test
+ void shouldIgnoreBlankTitleAndTrimSpaces() {
+     // Arrange
+     when(repository.findByStatus(TaskStatus.PENDING)).thenReturn(List.of());
+     when(repository.findByTitleContainingIgnoreCase("java")).thenReturn(List.of());
+
+     // Act
+     service.findAll("   ", TaskStatus.PENDING);
+     service.findAll("  java ", null);
+
+     // Assert
+     verify(repository).findByStatus(TaskStatus.PENDING);
+     verify(repository).findByTitleContainingIgnoreCase("java");
  }
 }
