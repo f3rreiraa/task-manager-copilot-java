@@ -67,6 +67,16 @@ class TaskServiceTest {
      verify(repository, never()).save(any());
  }
 
+ @Test
+ void shouldThrowWhenDeletingTaskThatDoesNotExist() {
+     // Arrange
+     when(repository.findById(42L)).thenReturn(Optional.empty());
+
+     // Act + Assert
+     assertThrows(TaskNotFoundException.class, () -> service.delete(42L));
+     verify(repository, never()).delete(any());
+ }
+
  // testes do filtro (desafio final)
 
  @Test

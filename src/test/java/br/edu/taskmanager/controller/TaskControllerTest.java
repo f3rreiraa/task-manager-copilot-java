@@ -1,6 +1,7 @@
 package br.edu.taskmanager.controller;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -88,6 +89,47 @@ class TaskControllerTest {
         when(service.findById(99L)).thenThrow(new TaskNotFoundException(99L));
 
         mvc.perform(get("/api/tasks/99"))
+            .andExpect(status().isNotFound())
+            .andExpect(jsonPath("$.message").value("Tarefa não encontrada: 99"));
+    }
+
+    @Test
+    void shouldReturn200WhenFindingTaskById() throws Exception {
+        when(service.findById(1L)).thenReturn(
+            new TaskResponse(1L, "Estudar Copilot", "Lab", TaskStatus.PENDING, TaskPriority.MEDIUM));
+
+        mvc.perform(get("/api/tasks/1"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.id").value(1))
+            .andExpect(jsonPath("$.title").value("Estudar Copilot"))
+            .andExpect(jsonPath("$.priority").value("MEDIUM"));
+    }
+
+    @Test
+    void shouldReturn200WhenTaskIsUpdated() throws Exception {
+        when(service.update(eq(1L), any())).thenReturn(
+            new TaskResponse(1L, "Tarefa atualizada", "Nova desc", TaskStatus.DONE, TaskPriority.HIGH));
+
+        mvc.perform(put("/api/tasks/1").contentType(MediaType.APPLICATION_JSON)
+                .content("{\"title\":\"Tarefa atualizada\",\"description\":\"Nova desc\",\"status\":\"DONE\",\"priority\":\"HIGH\"}"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.status").value("DONE"))
+            .andExpect(jsonPath("$.priority").value("HIGH"));
+    }
+
+    @Test
+    void shouldReturn204WhenTaskIsDeleted() throws Exception {
+        mvc.perform(delete("/api/tasks/1"))
+            .andExpect(status().isNoContent());
+
+        verify(service).delete(1L);
+    }
+
+    @Test
+    void shouldReturn404WhenDeletingNonExistentTask() throws Exception {
+        doThrow(new TaskNotFoundException(99L)).when(service).delete(99L);
+
+        mvc.perform(delete("/api/tasks/99"))
             .andExpect(status().isNotFound())
             .andExpect(jsonPath("$.message").value("Tarefa não encontrada: 99"));
     }
