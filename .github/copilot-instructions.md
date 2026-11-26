@@ -1,0 +1,1 @@
+Leia e siga o arquivo AGENTS.md antes de sugerir alterações. Preserve a arquitetura Controller -> Service -> Repository. Para tarefas especializadas, consulte a Skill correspondente em .github/skills. Não faça mudanças amplas sem apresentar um plano curto e verificável.
