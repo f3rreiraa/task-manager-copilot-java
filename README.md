@@ -1,4 +1,25 @@
-# Laboratório: Java Full Stack com VS Code, GitHub Copilot, AGENTS.md e Skills
+# Gerenciador de Tarefas
+
+Gerenciador de tarefas full stack desenvolvido com **GitHub Copilot** (VS Code) na atividade de laboratório (Java 21 + Spring Boot + H2 + HTML/CSS/JS).
+
+**O que foi implementado com o GitHub Copilot em cima do projeto base:**
+- prioridade das tarefas (`LOW`, `MEDIUM`, `HIGH`);
+- busca por título (ignora maiúsculas/minúsculas) e filtro por status: `GET /api/tasks?title=copilot&status=PENDING`;
+- respostas de erro sempre em JSON com status HTTP certo (400, 404, 405, 500);
+- testes de service, repository e controller (28 testes).
+
+**Como rodar:**
+```bash
+mvn test
+mvn spring-boot:run
+```
+Depois abra `http://localhost:8080`.
+
+O relatório da atividade está em [`RELATORIO.md`](RELATORIO.md). Abaixo está o roteiro original do laboratório.
+
+---
+
+## Laboratório: Java Full Stack com VS Code, GitHub Copilot, AGENTS.md e Skills
 
 Projeto didático para aprender a usar o GitHub Copilot como assistente e agente de engenharia, com planejamento, implementação, testes, depuração, revisão e Git.
 
