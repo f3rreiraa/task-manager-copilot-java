@@ -4,8 +4,8 @@
   <parent>
     <groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-parent</artifactId><version>3.4.2</version><relativePath/>
   </parent>
-  <groupId>br.edu</groupId><artifactId>task-manager-copilot</artifactId><version>0.0.1-SNAPSHOT</version>
-  <name>task-manager-copilot</name><description>Atividade educacional com Java, VS Code, GitHub Copilot, AGENTS.md e Skills</description>
+  <groupId>br.edu</groupId><artifactId>gerenciador-tarefas</artifactId><version>0.0.1-SNAPSHOT</version>
+  <name>gerenciador-tarefas</name><description>Gerenciador de tarefas full stack com Spring Boot, H2 e frontend em JavaScript</description>
   <properties><java.version>21</java.version></properties>
   <dependencies>
     <dependency><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-web</artifactId></dependency>
