@@ -11,8 +11,21 @@ public class Task {
     private String description;
     @Enumerated(EnumType.STRING) @Column(nullable = false)
     private TaskStatus status;
+    @Enumerated(EnumType.STRING) @Column(nullable = false)
+    private TaskPriority priority;
     protected Task() {}
-    public Task(String title, String description, TaskStatus status) { this.title=title; this.description=description; this.status=status; }
+    public Task(String title, String description, TaskStatus status, TaskPriority priority) {
+        this.title = title;
+        this.description = description;
+        this.status = status;
+        this.priority = priority;
+    }
     public Long getId(){return id;} public String getTitle(){return title;} public String getDescription(){return description;} public TaskStatus getStatus(){return status;}
-    public void update(String title,String description,TaskStatus status){this.title=title;this.description=description;this.status=status;}
+    public TaskPriority getPriority(){return priority;}
+    public void update(String title, String description, TaskStatus status, TaskPriority priority) {
+        this.title = title;
+        this.description = description;
+        this.status = status;
+        this.priority = priority;
+    }
 }
